@@ -1,3 +1,3 @@
-# A simple Spring Boot Restful Web Service
+# A Simple Spring Boot Restful Web Service
 
 

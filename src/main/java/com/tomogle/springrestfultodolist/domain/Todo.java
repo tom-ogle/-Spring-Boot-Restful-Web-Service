@@ -26,4 +26,25 @@ public class Todo {
   public String getContent() {
     return content;
   }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+
+    Todo todo = (Todo) o;
+
+    if (id != todo.id) return false;
+    if (title != null ? !title.equals(todo.title) : todo.title != null) return false;
+    return content != null ? content.equals(todo.content) : todo.content == null;
+
+  }
+
+  @Override
+  public int hashCode() {
+    int result = (int) (id ^ (id >>> 32));
+    result = 31 * result + (title != null ? title.hashCode() : 0);
+    result = 31 * result + (content != null ? content.hashCode() : 0);
+    return result;
+  }
 }
