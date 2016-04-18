@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- *
+ * Restful controller for todos.
  */
 @RestController
 @RequestMapping("/todo")
@@ -17,4 +17,7 @@ public class TodoController {
   public Todo getTodoById(@RequestParam(value="id") long id) {
     return new Todo(id, "Hard coded Todo", "Some contents");
   }
+
+//  @RequestMapping(method = RequestMethod.POST)
+//  public
 }
