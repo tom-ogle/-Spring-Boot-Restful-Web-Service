@@ -15,6 +15,9 @@ public class TodoDTO {
   @Size(max = Todo.MAX_LENGTH_CONTENT)
   private String content;
 
+  public TodoDTO() {
+  }
+
   public TodoDTO(String id, String title, String content) {
     this.id = id;
     this.title = title;

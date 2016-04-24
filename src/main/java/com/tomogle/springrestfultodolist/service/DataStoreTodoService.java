@@ -2,6 +2,7 @@ package com.tomogle.springrestfultodolist.service;
 
 import com.tomogle.springrestfultodolist.domain.Todo;
 import com.tomogle.springrestfultodolist.dto.TodoDTO;
+import com.tomogle.springrestfultodolist.exception.TodoBadIDException;
 import com.tomogle.springrestfultodolist.exception.TodoNotFoundException;
 import com.tomogle.springrestfultodolist.repository.TodoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,13 +51,13 @@ class DataStoreTodoService implements TodoService {
   }
 
   @Override
-  public TodoDTO update(TodoDTO todo) {
+  public TodoDTO update(String id, TodoDTO todo) throws TodoBadIDException {
     // TODO
     return null;
   }
 
   @Override
-  public TodoDTO delete(String id) {
+  public TodoDTO delete(String id) throws TodoNotFoundException {
     // TODO
     return null;
   }

@@ -54,7 +54,7 @@ public class DataStoreTodoServiceTest {
   }
 
   @Test(expected = TodoNotFoundException.class)
-  public void findByIdShouldThrowIfCannotFindTodo() {
+  public void findByIdShouldThrowIfCannotFindTodo() throws TodoNotFoundException {
     String idNotInDataStore = "ID not present in data store";
     when(mockTodoRepository.find(idNotInDataStore)).thenReturn(Optional.empty());
 
@@ -62,7 +62,7 @@ public class DataStoreTodoServiceTest {
   }
 
   @Test
-  public void findByIdShouldReturnExpectedToDoDtoIfPresentInDataStore() {
+  public void findByIdShouldReturnExpectedToDoDtoIfPresentInDataStore() throws TodoNotFoundException {
     String idInDataStore = "id in data store";
     Todo returnedFromDataStore = new Todo(idInDataStore, TITLE, DESCRIPTION);
     TodoDTO expectedResult = createTodoDTO(idInDataStore, TITLE, DESCRIPTION);
