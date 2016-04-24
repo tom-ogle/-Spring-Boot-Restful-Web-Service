@@ -37,6 +37,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebAppConfiguration
 public class TodoControllerTest {
 
+  // TODO: Further tests for bad input, e.g. title and description over max length
+
   private final String todoResourceBasePath = TodoController.TODO_RESOURCE_BASE_PATH;
   private final String todoByIdResourcePath = todoResourceBasePath + "/{id}";
 

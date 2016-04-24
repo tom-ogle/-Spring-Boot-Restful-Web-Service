@@ -15,6 +15,6 @@ public interface TodoRepository extends Repository<Todo, String> {
   List<Todo> findAll();
   Optional<Todo> find(String id);
   Todo save(Todo toBeSaved);
-  Todo delete(String idToBeDeleted) throws TodoNotFoundException;
+  void delete(Todo todoToDelete) throws TodoNotFoundException;
 
 }

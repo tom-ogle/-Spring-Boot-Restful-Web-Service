@@ -102,21 +102,21 @@ public class DataStoreTodoServiceTest {
   }
 
   @Test
-  public void deleteShouldDeleteTheRequestId() throws TodoNotFoundException {
+  public void deleteShouldDeleteTheTodo() throws TodoNotFoundException {
     String idToDelete = "id to delete";
-    Todo deletedTodoReturnedFromRepository = new Todo(idToDelete, "title", "some content");
-    when(mockTodoRepository.delete(idToDelete)).thenReturn(deletedTodoReturnedFromRepository);
+    Todo todoReturnedFromRepository = new Todo(idToDelete, "title", "some content");
+    when(mockTodoRepository.find(idToDelete)).thenReturn(Optional.of(todoReturnedFromRepository));
 
     serviceUnderTest.delete(idToDelete);
-    verify(mockTodoRepository, times(1)).delete(idToDelete);
+    verify(mockTodoRepository, times(1)).delete(todoReturnedFromRepository);
   }
 
   @Test
   public void deleteShouldReturnDeletedTodoDetails() throws TodoNotFoundException {
     String idToDelete = "id to delete";
-    Todo todoDeleteFromRepository = new Todo(idToDelete, "title", "content");
+    Todo todoReturnedFromRepository = new Todo(idToDelete, "title", "content");
     TodoDTO expectedResult = new TodoDTO(idToDelete, "title", "content");
-    when(mockTodoRepository.delete(idToDelete)).thenReturn(todoDeleteFromRepository);
+    when(mockTodoRepository.find(idToDelete)).thenReturn(Optional.of(todoReturnedFromRepository));
 
     TodoDTO result = serviceUnderTest.delete(idToDelete);
     assertEquals(expectedResult, result);
@@ -125,7 +125,7 @@ public class DataStoreTodoServiceTest {
   @Test(expected = TodoNotFoundException.class)
   public void deleteGivenRepositoryThrowsTodoNotFoundExceptionShouldPropagateException() throws TodoNotFoundException {
     String idToDelete = "an ID";
-    when(mockTodoRepository.delete(idToDelete)).thenThrow(new TodoNotFoundException(""));
+    when(mockTodoRepository.find(idToDelete)).thenReturn(Optional.empty());
     serviceUnderTest.delete(idToDelete);
   }
 

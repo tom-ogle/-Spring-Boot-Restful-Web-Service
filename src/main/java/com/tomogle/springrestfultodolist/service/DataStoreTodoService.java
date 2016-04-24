@@ -30,14 +30,13 @@ class DataStoreTodoService implements TodoService {
   @Override
   public List<TodoDTO> findAll() {
     List<Todo> todos = repository.findAll();
-    return todos.stream().map(this::convertTodoToDTO).collect(Collectors.toList());
+    return convertToDTOs(todos);
   }
 
   @Override
   public TodoDTO findById(String id) throws TodoNotFoundException {
-    Optional<Todo> todo = repository.find(id);
-    Todo definitelyTodo = todo.orElseThrow(() -> new TodoNotFoundException(format("Could not find Todo with ID %s", id)));
-    return convertTodoToDTO(definitelyTodo);
+    Todo todo = findTodoById(id);
+    return convertTodoToDTO(todo);
   }
 
   @Override
@@ -49,24 +48,26 @@ class DataStoreTodoService implements TodoService {
 
   @Override
   public TodoDTO update(String id, TodoDTO todoDTO) throws TodoBadIDException {
-    String idFromDTO = todoDTO.getId();
-    verifyIdOrThrow(id, idFromDTO);
-    addIdToDTOIfRequired(id, todoDTO, idFromDTO);
-    Todo todoToUpdate = convertTodoDTOToToDo(todoDTO);
+    verifyIdOrThrow(id, todoDTO.getId());
+    Todo todoToUpdate = convertTodoDTOToToDo(createDTOWithCorrectId(id, todoDTO));
     Todo updatedTodo = repository.save(todoToUpdate);
     return convertTodoToDTO(updatedTodo);
   }
 
   @Override
   public TodoDTO delete(String id) throws TodoNotFoundException {
-    Todo deletedTodo = repository.delete(id);
-    return convertTodoToDTO(deletedTodo);
+    Todo todoToDelete = findTodoById(id);
+    repository.delete(todoToDelete);
+    return convertTodoToDTO(todoToDelete);
   }
 
-  private void addIdToDTOIfRequired(String id, TodoDTO todoDTO, String idFromDTO) {
-    if(!notEmpty(idFromDTO)) {
-      todoDTO.setId(id);
-    }
+  private Todo findTodoById(String id) throws TodoNotFoundException {
+    Optional<Todo> todo = repository.find(id);
+    return todo.orElseThrow(() -> new TodoNotFoundException(format("Could not find Todo with ID %s", id)));
+  }
+
+  private TodoDTO createDTOWithCorrectId(String id, TodoDTO todoDTO) {
+    return new TodoDTO(id, todoDTO.getTitle(), todoDTO.getContent());
   }
 
   private void verifyIdOrThrow(String idToUpdate, String idFromDTO) throws TodoBadIDException {
@@ -85,5 +86,9 @@ class DataStoreTodoService implements TodoService {
 
   private Todo convertTodoDTOToToDo(TodoDTO todoDTO) {
     return new Todo(todoDTO.getId(), todoDTO.getTitle(), todoDTO.getContent());
+  }
+
+  private List<TodoDTO> convertToDTOs(List<Todo> todos) {
+    return todos.stream().map(this::convertTodoToDTO).collect(Collectors.toList());
   }
 }
