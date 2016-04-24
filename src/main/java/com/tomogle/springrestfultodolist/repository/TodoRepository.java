@@ -1,6 +1,7 @@
 package com.tomogle.springrestfultodolist.repository;
 
 import com.tomogle.springrestfultodolist.domain.Todo;
+import com.tomogle.springrestfultodolist.exception.TodoNotFoundException;
 import org.springframework.data.repository.Repository;
 
 import java.util.List;
@@ -14,6 +15,6 @@ public interface TodoRepository extends Repository<Todo, String> {
   List<Todo> findAll();
   Optional<Todo> find(String id);
   Todo save(Todo toBeSaved);
-  void delete(Todo toBeDeleted);
+  Todo delete(String idToBeDeleted) throws TodoNotFoundException;
 
 }

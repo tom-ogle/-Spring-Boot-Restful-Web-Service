@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 
@@ -28,8 +29,8 @@ class DataStoreTodoService implements TodoService {
 
   @Override
   public List<TodoDTO> findAll() {
-    // TODO
-    return null;
+    List<Todo> todos = repository.findAll();
+    return todos.stream().map(this::convertTodoToDTO).collect(Collectors.toList());
   }
 
   @Override
@@ -41,24 +42,48 @@ class DataStoreTodoService implements TodoService {
 
   @Override
   public TodoDTO create(TodoDTO todoDTO) {
-    Todo todoToSave = new Todo(todoDTO.getId(), todoDTO.getTitle(), todoDTO.getContent());
+    Todo todoToSave = convertTodoDTOToToDo(todoDTO);
     Todo todoWasSaved = repository.save(todoToSave);
     return convertTodoToDTO(todoWasSaved);
+  }
+
+  @Override
+  public TodoDTO update(String id, TodoDTO todoDTO) throws TodoBadIDException {
+    String idFromDTO = todoDTO.getId();
+    verifyIdOrThrow(id, idFromDTO);
+    addIdToDTOIfRequired(id, todoDTO, idFromDTO);
+    Todo todoToUpdate = convertTodoDTOToToDo(todoDTO);
+    Todo updatedTodo = repository.save(todoToUpdate);
+    return convertTodoToDTO(updatedTodo);
+  }
+
+  @Override
+  public TodoDTO delete(String id) throws TodoNotFoundException {
+    Todo deletedTodo = repository.delete(id);
+    return convertTodoToDTO(deletedTodo);
+  }
+
+  private void addIdToDTOIfRequired(String id, TodoDTO todoDTO, String idFromDTO) {
+    if(!notEmpty(idFromDTO)) {
+      todoDTO.setId(id);
+    }
+  }
+
+  private void verifyIdOrThrow(String idToUpdate, String idFromDTO) throws TodoBadIDException {
+    if(notEmpty(idFromDTO) && !idFromDTO.equals(idToUpdate)) {
+      throw new TodoBadIDException(format("The provided ID ( %s ) did not match the ID in the Object ( %s )", idToUpdate, idFromDTO));
+    }
+  }
+
+  private boolean notEmpty(String idFromDTO) {
+    return idFromDTO != null && !idFromDTO.isEmpty();
   }
 
   private TodoDTO convertTodoToDTO(Todo todoToConvert) {
     return new TodoDTO(todoToConvert.getId(), todoToConvert.getTitle(), todoToConvert.getContent());
   }
 
-  @Override
-  public TodoDTO update(String id, TodoDTO todo) throws TodoBadIDException {
-    // TODO
-    return null;
-  }
-
-  @Override
-  public TodoDTO delete(String id) throws TodoNotFoundException {
-    // TODO
-    return null;
+  private Todo convertTodoDTOToToDo(TodoDTO todoDTO) {
+    return new Todo(todoDTO.getId(), todoDTO.getTitle(), todoDTO.getContent());
   }
 }
